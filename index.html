@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>~~~~</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!--<meta itemprop="image" content="./images/fenxiang.png" />-->
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+            background: #79a8ae;
+            color: #CFEBE4;
+            font-size: 18px;
+            line-height: 2;
+            letter-spacing: 1.2px;
+            margin: 0;
+        }
+
+        a {
+            color: #ebf7f4;
+        }
+
+        .body--ready {
+            background: -webkit-linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
+            background: -moz-linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
+            background: -o-linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
+            background: -ms-linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
+            background: linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
+        }
+
+        .text {
+            position: fixed;
+            bottom: 100px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .canvas {
+            margin: 0 auto;
+            display: block;
+        }
+
+        img#logo {
+            width: 128px;
+            background-size: cover;
+            border-radius: 200px;
+            box-shadow: 0px 0px 40px rgba(63, 81, 181, 0.72);
+            border: 3px solid #00a0ff;
+            opacity: 1;
+            margin: 0 auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            transition: all 1.0s;
+        }
+
+        #logo:hover {
+            box-shadow: 0 0 10px #fff;
+            -webkit-box-shadow: 0 0 19px #fff;
+            transform: rotate(360deg);
+            -ms-transform: rotate(360deg); /* IE 9 */
+            -moz-transform: rotate(360deg); /* Firefox */
+            -webkit-transform: rotate(360deg); /* Safari 和 Chrome */
+            -o-transform: rotate(360deg); /* Opera */
+            filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        }
+
+        .cs {
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+            position: absolute;
+            text-align: center;
+        }
+
+        .text {
+            position: fixed;
+            bottom: 80px;
+            text-align: center;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .text-right {
+            position: fixed;
+            bottom: 50px;
+            text-align: right;
+            width: 100%;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+
+<body>
+<div class="cs">
+    <img src="http://wx1.sinaimg.cn/large/006gFOhdly1fr0hdrzlolj30b40b4dg7.jpg" id="logo">
+</div>
+<canvas class="canvas" width="1820" height="905"></canvas>
+<p class="text" style="color: #ed3073;">
+    We fell in love
+    <br/>
+    <span id="span_dt_dt"></span>
+</p>
+<script language="javascript">
+    function show_date_time() {
+        window.setTimeout("show_date_time()", 1000);
+        BirthDay = new Date("2017/04/28 00:00:00");//这个日期是可以修改的
+        today = new Date();
+        timeold = (today.getTime() - BirthDay.getTime());
+        sectimeold = timeold / 1000
+        secondsold = Math.floor(sectimeold);
+        msPerDay = 24 * 60 * 60 * 1000
+        e_daysold = timeold / msPerDay
+        daysold = Math.floor(e_daysold);
+        e_hrsold = (e_daysold - daysold) * 24;
+        hrsold = Math.floor(e_hrsold);
+        e_minsold = (e_hrsold - hrsold) * 60;
+        minsold = Math.floor((e_hrsold - hrsold) * 60);
+        seconds = Math.floor((e_minsold - minsold) * 60);
+        span_dt_dt.innerHTML = daysold + "天" + hrsold + "小时" + minsold + "分" + seconds + "秒";
+    }
+
+    show_date_time();
+</script>
+<script>
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n)
+}
+var subtitles = {
+  init: function () {
+    subtitles.created.init()
+    document.body.classList.add('body--ready')
+  },
+  created: (function (){
+    var canvas,
+    context,
+    renderFn,
+    requestFrame =  window.requestAnimationFrame ||
+                    window.webkitRequestAnimationFrame ||
+                    window.mozRequestAnimationFrame ||
+                    window.oRequestAnimationFrame ||
+                    window.msRequestAnimationFrame ||
+                    function (callback) {
+                      window.setTimeout(callback, 1000 / 60)
+                    }
+    return {
+      init: function () {
+        canvas = document.querySelector('.canvas')
+        context = canvas.getContext('2d')
+        this.adjustCanvas()
+        window.addEventListener('resize', function (e) {
+          subtitles.created.adjustCanvas()
+        })
+        subtitles.font.write()
+        requestFrame.call(window, this.render.bind(this))
+      },
+      adjustCanvas: function () {
+        canvas.width = window.innerWidth - 100;
+        canvas.height = window.innerHeight - 30;
+      },
+      render: function(){
+        context.clearRect(0, 0, canvas.width, canvas.height)
+        subtitles.particle.animationV()
+        requestFrame.call(window, this.render.bind(this))
+      },
+      getArea: function (){
+        return {width: canvas.width, height: canvas.height}
+      }
+    }
+  })(),
+  font: (function (){
+    var index = 0, // 记录当前播放的字幕
+        text,
+        // words = ['love'],
+        words = ['瑶瑶', 'I.m','zzl', 'thanks', 'for', 'meeting', 'love'],
+        fontSize = 500,
+        canvas = document.querySelector('canvas'),
+        context = canvas.getContext('2d'),
+        fontFamily = 'Avenir, Helvetica Neue, Helvetica, Arial, sans-serif',
+        timeout,
+        timeoutTime = 3000
+    return {
+      // 先写字,后面会按照画布的内容生成粒子覆盖
+      write: function (){
+        text = words[index]
+        context.textAlign = "center"
+        context.textBaseline = "middle"
+        context.fillStyle = 'white'
+        size = Math.min(fontSize,
+          (canvas.width / context.measureText(text).width) * 0.8 * fontSize,
+          (canvas.height / fontSize) * (isNumber(text) ? 1 : 0.45) * fontSize)
+        context.font = 'bold ' + size + 'px ' + fontFamily
+        context.clearRect(0, 0, canvas.width, canvas.height)
+        switch(text) {
+          case 'love':
+            this.drawLove()
+            break;
+          default:
+            context.fillText(text, canvas.width / 2, canvas.height / 2)
+        }
+        subtitles.particle.init(text)
+        if (index < words.length -1) this.intervalFn()
+      },
+      intervalFn: function () {
+        timeout = setTimeout( this.nextTick.bind(this), timeoutTime)
+      },
+      //
+      nextTick: function () {
+        index ++ 
+        this.write()
+      },
+      // 画一个爱心
+      drawLove(){
+        var r = 16,
+            radian, //弧度  
+            radianDecrement = Math.PI / 180,
+            time = 10,
+            startRadian = Math.PI
+        context.strokeStyle = "red"  
+        context.lineWidth = 20 
+        radian = startRadian
+        context.moveTo(getX(radian), getY(radian)) 
+        for (let i = 0; i < 360; i ++) {
+          radian += radianDecrement
+          context.lineTo(getX(radian), getY(radian))
+          context.fill()
+        }
+        function getX(t) {//由弧度得到 X 坐标  
+          return canvas.width/2 + r * (16 * Math.pow(Math.sin(t), 3))
+        }  
+        function getY(t) {//由弧度得到 Y 坐标  
+          return canvas.height/2 - r * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))
+        }  
+      }
+    }
+  })(),
+  // 粒子
+  particle: (function(){
+    var group = [],
+        canvas = document.querySelector('canvas'),
+        context = canvas.getContext('2d'),
+        text,
+        gap = 12,
+        gapR = 6,
+        innerter
+    return  {
+      init: function (l){
+        if(group.length === 0) group.push(new subtitles.Point({x: canvas.width/2, y: canvas.height/2, gapR})) // 先创建一个样本粒子供clone
+        if (text === l) return 
+        text = l
+        var imageData = context.getImageData(0, 0, canvas.width, canvas.height).data // canvas所有的像素点，每个像素点有rgba4个值在数组内，所以每个像素在数组占四个长度
+        let num = -1 // 需要多少粒子来覆盖内容
+        let W = 0 // 记录当前遍历到第几行 
+        for (let i = gapR * 4; i < imageData.length; i += (4 * gap) ) { // 遍历每个像素点，找到有内容的点位，然后在该点位创建粒子
+          let w = Math.floor(i / 4 / canvas.width)
+          if (w > W) { // 如果换行了，需要跳过gap以后的行数，按照gapR * 4为起点重新开始遍历
+            W = w + gap
+            i = w * 4 * canvas.width + gapR * 4 + gap * canvas.width * 4
+          }
+          if (imageData[i] > 0) {
+            num ++
+            let position = {
+              x: i / 4 % canvas.width ,
+              y: (Math.ceil(i / 4 / canvas.width)),
+              gapR: gapR,
+              a: 0.8,
+              m: 0.8
+            }
+            if (!group[num]) { // 如果第num个粒子已经有了，可以让它移动，没有就从现有的粒子中随机clone一个
+              let index = Math.floor(Math.random() * group.length)
+              group.push(group[index].clone(position))
+            }
+            group[num].move(position)
+          }
+        }
+        // 多出来的粒子随机移动
+        for (let j = num + 1; j < group.length; j ++) {
+          group[j].move({
+            x: Math.floor(Math.random() * canvas.width) ,
+            y: Math.floor(Math.random() * canvas.height) ,
+            gapR,
+            a: Math.random() * 0.4 + 0.2,
+            m: Math.random() * 0.4 + 0.2,
+            float: true
+          })
+        }
+      },
+      // 所有粒子已经就位，开始做动画
+      animationV: function (){
+        for(let p = 0; p < group.length; p++) {
+          let item = group[p]
+          item.x += item.movex
+          item.y += item.movey
+          item.isMoveEnd()
+          if (item.moveNum === 0) { // 因为每个粒子每帧运动距离是随机的，并且可能是不规则无限小数，所以几十帧下来可能和目的地偏差比较大，在最后一帧给他纠正一下。。。
+            item.x = item.cx
+            item.y = item.cy
+          }
+          if (item.float) { // 周围的粒子让他偏移位置浮动起来
+            item.x += (0.5 - Math.random()) * 1
+            item.y += (0.5 - Math.random()) * 1
+          }
+          context.beginPath()
+          context.fillStyle = item.color()
+          context.arc(item.x, item.y, item.m * gapR, 0, 2 * Math.PI, true)
+          context.closePath()
+          context.fill()
+        }
+      }
+    }
+  })(),
+  // 粒子的构造函数
+  Point: function (position) {
+    this.x = this._x = this.cx = position.x // _x是原坐标,x是当前坐标，cx是运动的终点坐标
+    this.y = this._y = this.cy = position.y
+    this.movex = 0 // 每帧x运动的距离
+    this.movey = 0 // 每帧y运动的距离
+    this.r = 255
+    this.g = 255
+    this.b = 255
+    this.a = 0.8 // 透明度
+    this.float = false // 周围的粒子可以让它动一动，。。好看一点
+    this.m = 0.8 // 粒子放大倍数，正常情况下需要缩小，留点间隙
+    this.moveNum = 0 // 在对应时间内，移动一次+1，一直到移动完毕，动画结束，重新归0
+    this.moveNumC = Math.floor(Math.random() * 60 + 30) // 每个粒子的移动速度都应该不一样，好看一些。。。
+    gapR = position.gapR
+  },
+}
+  
+subtitles.Point.prototype = {
+  renderAnimat: null,
+  move: function (position) {
+    this._x = this.x // 开始运动了，保留当前坐标
+    this._y = this.y
+    this.movex = (position.x - this.x) / this.moveNumC
+    this.movey = (position.y - this.y) / this.moveNumC
+    this.cx = position.x // 更新目标坐标
+    this.cy = position.y
+    this.a = position.m || this.a
+    this.m = position.m || this.m
+    this.moveNum = 0
+    this.float = position.float || false
+  },
+  color: function () {
+    return 'rgba(' + this.r + ',' + +this.g + ',' + this.b + ',' + this.a + ')';
+  },
+  isMoveEnd: function () { // 是否运动结束，如果运动结束就清空movex和movey
+    if(this.moveNum == this.moveNumC) {
+      this.movex = 0
+      this.movey = 0
+      this.moveNum = 0
+      return
+    }
+    this.moveNum ++
+  },
+  clone: function () {
+    return new subtitles.Point(this)
+  }
+}
+subtitles.init();
+
+</script>
+</body>
+</html>
