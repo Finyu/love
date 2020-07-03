@@ -26,11 +26,11 @@
         }
 
         .body--ready {
-            background: -webkit-linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
-            background: -moz-linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
-            background: -o-linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
-            background: -ms-linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
-            background: linear-gradient(top, rgb(0, 0, 219) 0%, rgb(55, 148, 192) 120%);
+            background: -webkit-linear-gradient(top, rgb(145,167,208) 0%, rgb(246,202,201) 120%);
+            background: -moz-linear-gradient(top, rgb(145,167,208) 0%, rgb(246,202,201) 120%);
+            background: -o-linear-gradient(top, rgb(145,167,208) 0%, rgb(246,202,201) 120%);
+            background: -ms-linear-gradient(top, rgb(145,167,208) 0%, rgb(246,202,201) 120%);
+            background: linear-gradient(top, rgb(145,167,208) 0%, rgb(246,202,201) 120%);
         }
 
         .text {
@@ -44,7 +44,14 @@
             margin: 0 auto;
             display: block;
         }
-
+        .canvas2 {
+            margin: 0 auto;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX( -50% );
+        }
         img#logo {
             width: 128px;
             background-size: cover;
@@ -98,9 +105,10 @@
 
 <body>
 <div class="cs">
-    <img src="http://wx1.sinaimg.cn/large/006gFOhdly1fr0hdrzlolj30b40b4dg7.jpg" id="logo">
+    <!-- <img src="http://wx1.sinaimg.cn/large/006gFOhdly1fr0hdrzlolj30b40b4dg7.jpg" id="logo"> -->
 </div>
 <canvas class="canvas" width="1820" height="905"></canvas>
+<canvas class="canvas2" width="1820" height="905"></canvas>
 <p class="text" style="color: #ed3073;">
     We fell in love
     <br/>
@@ -128,6 +136,16 @@
     show_date_time();
 </script>
 <script>
+  
+// window.onload = function () {  
+//             ctx = document.querySelector(".canvas2").getContext("2d")
+//             var img = new Image()
+//             img.src = './1.jpg'
+//             img.onload = function () {
+//               console.log(ctx)
+//               ctx.drawImage(img, 0, 0, 200, 100)
+//             }
+//         }
 function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n)
 }
@@ -150,8 +168,11 @@ var subtitles = {
                     }
     return {
       init: function () {
+        // 第二层canvas可以放照片
         canvas = document.querySelector('.canvas')
+        canvas2 = document.querySelector('.canvas2')
         context = canvas.getContext('2d')
+        context2 = canvas.getContext('2d')
         this.adjustCanvas()
         window.addEventListener('resize', function (e) {
           subtitles.created.adjustCanvas()
@@ -162,6 +183,8 @@ var subtitles = {
       adjustCanvas: function () {
         canvas.width = window.innerWidth - 100;
         canvas.height = window.innerHeight - 30;
+        canvas2.width = window.innerWidth - 100;
+        canvas2.height = window.innerHeight - 30;
       },
       render: function(){
         context.clearRect(0, 0, canvas.width, canvas.height)
@@ -176,8 +199,8 @@ var subtitles = {
   font: (function (){
     var index = 0, // 记录当前播放的字幕
         text,
-        // words = ['love'],
-        words = ['瑶瑶', 'I.m','zzl', 'thanks', 'for', 'meeting', 'love'],
+        words = ['love'],
+        // words = ['瑶瑶', 'I.m','zzl', 'thanks', 'for', 'meeting', 'love'],
         fontSize = 500,
         canvas = document.querySelector('canvas'),
         context = canvas.getContext('2d'),
@@ -199,6 +222,7 @@ var subtitles = {
         switch(text) {
           case 'love':
             this.drawLove()
+            this.showImg()
             break;
           default:
             context.fillText(text, canvas.width / 2, canvas.height / 2)
@@ -236,6 +260,15 @@ var subtitles = {
         function getY(t) {//由弧度得到 Y 坐标  
           return canvas.height/2 - r * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))
         }  
+      },
+      showImg(){
+        var img = new Image()
+        img.src = './5.png'
+        img.onload = function () {
+          let ctx = document.querySelector(".canvas2").getContext("2d")
+          ctx.globalAlpha = 0.6
+          ctx.drawImage(img, canvas.width/2 - 100, canvas.height/2 - 80, 200, 160)
+        }
       }
     }
   })(),
@@ -321,8 +354,8 @@ var subtitles = {
     this.movex = 0 // 每帧x运动的距离
     this.movey = 0 // 每帧y运动的距离
     this.r = 255
-    this.g = 255
-    this.b = 255
+    this.g = 192
+    this.b = 203
     this.a = 0.8 // 透明度
     this.float = false // 周围的粒子可以让它动一动，。。好看一点
     this.m = 0.8 // 粒子放大倍数，正常情况下需要缩小，留点间隙
@@ -363,7 +396,6 @@ subtitles.Point.prototype = {
   }
 }
 subtitles.init();
-
 </script>
 </body>
 </html>
